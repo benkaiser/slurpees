@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+    This page contains a list of the retailers offering frozen cokes in Australia and details about their current price, conditions, etc.
+    The retailers are:
+    7-Eleven
+    McDonald's
+    Hungry Jack's
+    KFC
+  -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Frozen Coke Prices</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css">
+  <style>
+    .product-image {
+      max-width: 200px;
+      max-height: 200px;
+      float: right;
+      padding: 10px;
+    }
+    main {
+      max-width: 650px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    const products = {
+      "7-Eleven": {
+        "Small": {
+          "Price": 1.00,
+          "Volume": 0.35
+        },
+        "Large": {
+          "Price": 1.50,
+          "Volume": 0.65
+        },
+        "Super": {
+          "Price": 2.50,
+          "Volume": 0.83
+        },
+        "Mega": {
+          "Price": 3.50,
+          "Volume": 1.035
+        }
+      },
+      "McDonald's": {
+        "Small": {
+          "Price": 1.00,
+          "RegularPrice": 1.00,
+          "Volume": 0.35
+        },
+        "Medium": {
+          "Price": 1.00,
+          "RegularPrice": 1.50,
+          "Volume": 0.5
+        },
+        "Large": {
+          "Price": 1.00,
+          "RegularPrice": 2.00,
+          "Volume": 0.65
+        }
+      },
+      "Hungry Jack's": {
+        "One size": 1.00
+      },
+      "KFC": {
+        "One size": 1.00
+      }
+    };
+
+    function getPrice(brand, size, isRegularPrice) {
+      if (products[brand] && products[brand][size]) {
+        return isRegularPrice ? products[brand][size].RegularPrice : products[brand][size].Price;
+      }
+      return null;
+    }
+
+    function getPricePerLiter(brand, size, isRegularPrice) {
+      if (products[brand] && products[brand][size]) {
+        const price = getPrice(brand, size, isRegularPrice);
+        return price / products[brand][size].Volume;
+      }
+      return null;
+    }
+
+    function formatSizeAndPriceAndPricePerLiter(brand, size, isRegularPrice = false) {
+      const price = getPrice(brand, size, isRegularPrice);
+      const pricePerLiter = getPricePerLiter(brand, size, isRegularPrice);
+      if (price && pricePerLiter) {
+        return `${size}: $${price.toFixed(2)} (\$${pricePerLiter.toFixed(2)}/L)`;
+      }
+      return `${size}: Not available`;
+    }
+
+    // function that returns the sizes of an establishment in a string like Small (350ml), Large (650ml), Super (830ml) and Mega (1035ml)
+    function establishmentSizes(brand) {
+      if (products[brand]) {
+        const sizes = Object.keys(products[brand]);
+        if (sizes.length === 1) {
+          return `${sizes[0]} (${products[brand][sizes[0]].Volume * 1000}ml)`;
+        }
+        const formattedSizes = sizes.map(size => `${size} (${products[brand][size].Volume * 1000}ml)`);
+        return formattedSizes.slice(0, -1).join(", ") + " and " + formattedSizes.slice(-1);
+      }
+      return "Not available";
+    }
+  </script>
+  <main>
+    <header>
+      <h1>Frozen Coke Prices</h1>
+    </header>
+    <section>
+      <h2>7-Eleven</h2>
+      <p>7-Eleven offers frozen cokes in four sizes: <script>
+          document.write(establishmentSizes("7-Eleven"));
+      </script>.<br/>
+Unlike other establishments, 7-Eleven allows you to self-serve your frozen coke, so you can actually fill it to the brim if you want to.<br/>
+One worthy exemption to the price structure, is that if you purchase a special-edition reusable cup (normally around ~650ml) you can fill it up for $1.00 indefinitely.
+
+      </p>
+      <img src="images/slurpee.png" alt="7-Eleven slurpee sizes" class="product-image">
+      <ul>
+        <script>
+          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("7-Eleven", "Small") + "</li>");
+          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("7-Eleven", "Large") + "</li>");
+          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("7-Eleven", "Super") + "</li>");
+          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("7-Eleven", "Mega") + "</li>");
+        </script>
+      </ul>
+    </section>
+    <section>
+      <h2>McDonald's</h2>
+      <p>McDonald's offers frozen cokes in 3 sizes: <script>
+          document.write(establishmentSizes("McDonald's"));
+      </script></p>
+      <p>
+        The MyMaccas app has a promotion where you can get all sizes for $1.00, but with a limit of one per order. This means if you want multiple you must place multiple orders.
+      </p>
+      <ul>
+        <script>
+          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Small") + "</li>");
+          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Medium") + "</li>");
+          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Large") + "</li>");
+        </script>
+      </ul>
+      <p>
+        Alternatively, the prices are as follows without the special deal / at the counter:
+      </p>
+      <ul>
+        <script>
+          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Small", true) + "</li>");
+          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Medium", true) + "</li>");
+          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Large", true) + "</li>");
+        </script>
+    </section>
+    <section>
+      <h2>Hungry Jack's</h2>
+      <p>Hungry Jack's offers frozen cokes in one size only. The price is $1.00.</p>
+    </section>
+    <section>
+      <h2>KFC</h2>
+      <p>KFC offers frozen cokes in one size only. The price is $1.00.</p>
+    </section>
+  </main>
+</body>
+
+</html>
