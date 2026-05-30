@@ -1,566 +1,754 @@
 <!DOCTYPE html>
 <html lang="en">
-<!--
-    This page contains a list of the retailers offering frozen cokes in Australia and details about their current price, conditions, etc.
-    The retailers are:
-    7-Eleven
-    McDonald's
-    Hungry Jack's
-    KFC
-  -->
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Frozen Coke Prices</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css">
-  <style>
-    .product-image {
-      max-width: 200px;
-      max-height: 200px;
-      float: right;
-      padding: 10px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b3d91">
+<title>Frozen Coke Index 🥤❄️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Theme ---------- */
+  :root {
+    --bg-1: #eaf4ff;
+    --bg-2: #cfe6ff;
+    --ink: #0d1b2a;
+    --ink-soft: #3b4a5c;
+    --muted: #6c7a8c;
+    --card: rgba(255,255,255,0.72);
+    --card-border: rgba(255,255,255,0.65);
+    --shadow: 0 10px 30px -12px rgba(13, 27, 42, 0.25);
+    --accent: #0b3d91;
+    --accent-2: #29b6ff;
+    --good: #15803d;
+    --bad: #c0392b;
+    --7eleven: #008c44;
+    --maccas: #db0007;
+    --hj: #f59e0b;
+    --kfc: #b8336a;
+    --radius: 18px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-1: #07172b;
+      --bg-2: #102a47;
+      --ink: #ecf3ff;
+      --ink-soft: #cbd6e6;
+      --muted: #8aa0bd;
+      --card: rgba(255,255,255,0.06);
+      --card-border: rgba(255,255,255,0.10);
+      --shadow: 0 10px 30px -12px rgba(0,0,0,0.6);
+      --accent: #6cb2ff;
+      --accent-2: #29b6ff;
+      --good: #4ade80;
+      --bad: #ff6b5e;
     }
-    main {
-      max-width: 650px !important;
-    }
-    .chart-wrap {
-      width: 100%;
-      overflow-x: auto;
-    }
-    .chart-wrap svg {
-      width: 100%;
-      height: auto;
-      max-width: 100%;
-      font-family: inherit;
-    }
-    .chart-wrap .axis line, .chart-wrap .axis path {
-      stroke: var(--pico-muted-border-color, #ccc);
-      stroke-width: 1;
-      fill: none;
-    }
-    .chart-wrap .grid line {
-      stroke: var(--pico-muted-border-color, #ddd);
-      stroke-dasharray: 2 3;
-      opacity: 0.5;
-    }
-    .chart-wrap text {
-      font-size: 11px;
-      fill: var(--pico-color, #333);
-    }
-    .chart-wrap .axis-label {
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .chart-wrap .point {
-      cursor: pointer;
-      transition: opacity .15s, transform .1s;
-    }
-    .chart-wrap .point:hover {
-      opacity: 0.7;
-    }
-    .chart-wrap .point.selected {
-      stroke: #111 !important;
-      stroke-width: 2.5 !important;
-    }
-    .point-info {
-      margin: 8px 0 0;
-      padding: 10px 12px;
-      border-radius: 6px;
-      background: var(--pico-card-background-color, #f7f7f7);
-      border: 1px solid var(--pico-muted-border-color, #ddd);
-      font-size: 0.9em;
-      min-height: 1.6em;
-    }
-    .point-info strong { font-size: 1em; }
-    .point-info .swatch {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      margin-right: 6px;
-      vertical-align: middle;
-    }
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 18px;
-      margin: 8px 0 4px;
-      font-size: 0.9em;
-    }
-    .legend .item {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .legend .swatch {
-      width: 14px;
-      height: 14px;
-      border-radius: 3px;
-      display: inline-block;
-    }
-    .legend .shape-key {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .best-worst {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 12px;
-    }
-    .best-worst > div {
-      padding: 10px 14px;
-      border-radius: 6px;
-      border: 1px solid var(--pico-muted-border-color, #ccc);
-    }
-    .best-worst .best { border-left: 4px solid #2e8b57; }
-    .best-worst .worst { border-left: 4px solid #c0392b; }
-    .best-worst h4 { margin: 0 0 4px; font-size: 0.95em; }
-    .best-worst p { margin: 0; font-size: 0.9em; }
-    @media (max-width: 480px) {
-      .best-worst { grid-template-columns: 1fr; }
-    }
-  </style>
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(1000px 600px at 110% -10%, rgba(41,182,255,0.35), transparent 60%),
+      radial-gradient(900px 500px at -20% 10%, rgba(11,61,145,0.25), transparent 60%),
+      linear-gradient(180deg, var(--bg-1), var(--bg-2));
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  /* Snowflake decoration */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.5) 1px, transparent 2px),
+      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.4) 1px, transparent 2px),
+      radial-gradient(circle at 50% 90%, rgba(255,255,255,0.4) 1px, transparent 2px),
+      radial-gradient(circle at 70% 20%, rgba(255,255,255,0.35) 1px, transparent 2px);
+    background-size: 220px 220px, 300px 300px, 250px 250px, 180px 180px;
+    pointer-events: none;
+    opacity: 0.7;
+    z-index: 0;
+  }
+  main { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 0 16px 48px; }
+
+  /* ---------- Header ---------- */
+  header.app-header {
+    position: sticky; top: 0;
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.25));
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    z-index: 10;
+  }
+  @media (prefers-color-scheme: dark) {
+    header.app-header { background: linear-gradient(180deg, rgba(7,23,43,0.7), rgba(7,23,43,0.4)); border-bottom-color: rgba(255,255,255,0.08);}
+  }
+  .app-header-inner {
+    max-width: 720px; margin: 0 auto;
+    padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.1rem;
+    letter-spacing: -0.01em;
+  }
+  .brand .logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(160deg, #29b6ff, #0b3d91);
+    display: grid; place-items: center; color: white; font-size: 18px;
+    box-shadow: 0 8px 20px -8px rgba(11,61,145,0.7);
+  }
+  .clock {
+    font-size: 0.78rem; color: var(--ink-soft);
+    background: rgba(255,255,255,0.5);
+    padding: 6px 10px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.6);
+    white-space: nowrap;
+  }
+  @media (prefers-color-scheme: dark) {
+    .clock { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    margin: 18px 0 22px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(2rem, 7vw, 3rem); line-height: 1.05; letter-spacing: -0.02em;
+    margin: 6px 0 6px;
+    background: linear-gradient(120deg, #0b3d91, #29b6ff 70%, #00d4ff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p { color: var(--ink-soft); margin: 0 8px; font-size: 0.98rem; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.72rem; font-weight: 600;
+    padding: 5px 10px; border-radius: 999px;
+    background: rgba(255,255,255,0.55); color: var(--ink-soft);
+    border: 1px solid rgba(255,255,255,0.6);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: var(--card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  .card h2 {
+    font-family: 'Fraunces', serif; font-weight: 800;
+    font-size: 1.3rem; margin: 0 0 4px; letter-spacing: -0.01em;
+  }
+  .card .sub { color: var(--muted); font-size: 0.88rem; margin: 0 0 14px; }
+
+  /* ---------- Hero deal ---------- */
+  .deal-card {
+    position: relative;
+    overflow: hidden;
+    color: white;
+    background:
+      radial-gradient(600px 200px at 90% -10%, rgba(255,255,255,0.25), transparent 60%),
+      linear-gradient(135deg, #0b3d91, #1976d2 60%, #29b6ff);
+    border: none;
+  }
+  .deal-card::after {
+    content: "❄";
+    position: absolute; right: -10px; bottom: -30px;
+    font-size: 220px; opacity: 0.10; transform: rotate(-15deg);
+  }
+  .deal-card .label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .deal-card .winner {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(1.6rem, 6vw, 2.2rem); line-height: 1.1;
+    margin: 8px 0 4px;
+  }
+  .deal-card .price-row {
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .deal-card .price {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(2.2rem, 9vw, 3.2rem); line-height: 1;
+  }
+  .deal-card .vol { opacity: 0.85; font-size: 0.95rem; }
+  .deal-card .ppl-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.35);
+    padding: 6px 12px; border-radius: 999px;
+    font-weight: 700; font-size: 0.9rem;
+    margin-top: 12px;
+  }
+  .deal-card .note { margin-top: 12px; font-size: 0.85rem; opacity: 0.88; }
+  .deal-card .warn {
+    margin-top: 12px;
+    background: rgba(255, 235, 110, 0.18);
+    border: 1px solid rgba(255, 235, 110, 0.4);
+    color: #fff8d4;
+    padding: 10px 12px; border-radius: 12px;
+    font-size: 0.85rem;
+  }
+
+  /* ---------- Retailer grid ---------- */
+  .retailers {
+    display: grid; gap: 14px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 560px) {
+    .retailers { grid-template-columns: 1fr 1fr; }
+  }
+  .retailer {
+    --r: var(--accent);
+    border-top: 4px solid var(--r);
+  }
+  .retailer.\37 -eleven { --r: var(--7eleven); }
+  .retailer.maccas { --r: var(--maccas); }
+  .retailer.hj { --r: var(--hj); }
+  .retailer.kfc { --r: var(--kfc); }
+  .retailer-head {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .retailer-badge {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: grid; place-items: center;
+    background: color-mix(in srgb, var(--r) 18%, transparent);
+    color: var(--r);
+    font-weight: 800; font-size: 0.85rem;
+    border: 1px solid color-mix(in srgb, var(--r) 35%, transparent);
+  }
+  .retailer-name { font-family:'Fraunces',serif; font-weight: 800; font-size: 1.15rem; }
+  .size-list { list-style: none; padding: 0; margin: 0; }
+  .size-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 2px 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(0,0,0,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    .size-row { border-bottom-color: rgba(255,255,255,0.08); }
+  }
+  .size-row:last-child { border-bottom: 0; }
+  .size-name { font-weight: 600; }
+  .size-name small { font-weight: 400; color: var(--muted); margin-left: 6px; }
+  .size-price { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.05rem; }
+  .ppl-bar {
+    grid-column: 1 / -1;
+    height: 6px; border-radius: 999px;
+    background: rgba(0,0,0,0.07);
+    position: relative; overflow: hidden;
+    margin-top: 4px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .ppl-bar { background: rgba(255,255,255,0.08); }
+  }
+  .ppl-bar > span {
+    position: absolute; inset: 0 auto 0 0;
+    background: linear-gradient(90deg, var(--r), color-mix(in srgb, var(--r) 50%, white));
+    border-radius: 999px;
+    transition: width .8s cubic-bezier(.2,.8,.2,1);
+  }
+  .ppl-text { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+  .scenario-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 0.68rem; padding: 2px 8px; border-radius: 999px;
+    background: rgba(0,0,0,0.06); color: var(--ink-soft); margin-left: 6px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  @media (prefers-color-scheme: dark) {
+    .scenario-tag { background: rgba(255,255,255,0.08); }
+  }
+  .scenario-tag.peak { background: rgba(192,57,43,0.12); color: #c0392b; }
+  .scenario-tag.deal { background: rgba(21,128,61,0.12); color: var(--good); }
+
+  .retailer-note {
+    margin-top: 10px;
+    background: rgba(255,255,255,0.4);
+    border: 1px dashed rgba(0,0,0,0.08);
+    padding: 8px 10px; border-radius: 10px;
+    font-size: 0.82rem; color: var(--ink-soft);
+  }
+  @media (prefers-color-scheme: dark) {
+    .retailer-note { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+  }
+
+  /* ---------- Chart ---------- */
+  .chart-card svg { width: 100%; height: auto; display: block; }
+  .chart-card .grid line { stroke: rgba(0,0,0,0.08); stroke-dasharray: 2 4; }
+  .chart-card .axis line, .chart-card .axis path { stroke: rgba(0,0,0,0.25); fill: none; }
+  .chart-card .axis text { fill: var(--ink-soft); font-size: 11px; }
+  @media (prefers-color-scheme: dark) {
+    .chart-card .grid line { stroke: rgba(255,255,255,0.08); }
+    .chart-card .axis line, .chart-card .axis path { stroke: rgba(255,255,255,0.25); }
+  }
+  .chart-card .point { cursor: pointer; transition: transform .15s, filter .15s; }
+  .chart-card .point:hover { filter: brightness(1.1); }
+  .chart-card .point.selected { stroke: var(--ink); stroke-width: 2.5; }
+  .iso { stroke: rgba(0,0,0,0.18); stroke-dasharray: 1 4; }
+  .iso-text { fill: var(--muted); font-size: 9px; }
+  @media (prefers-color-scheme: dark) {
+    .iso { stroke: rgba(255,255,255,0.18); }
+  }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 10px 0 0; font-size: 0.82rem; }
+  .legend .item { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .swatch { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+  .info-panel {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 12px;
+    font-size: 0.88rem; min-height: 1.6em;
+  }
+  @media (prefers-color-scheme: dark) {
+    .info-panel { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+  }
+  .info-panel .swatch { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
+
+  /* ---------- Best/worst row ---------- */
+  .ranking { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 560px) { .ranking { grid-template-columns: 1fr 1fr; } }
+  .rank {
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    color: white;
+    overflow: hidden; position: relative;
+    box-shadow: var(--shadow);
+  }
+  .rank.best { background: linear-gradient(135deg, #0f5132, #15803d, #4ade80); }
+  .rank.worst { background: linear-gradient(135deg, #7f1d1d, #c0392b, #ef6b5e); }
+  .rank .label { font-size: 0.72rem; letter-spacing: 0.18em; opacity: 0.85; text-transform: uppercase; }
+  .rank .who { font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.4rem; margin-top: 4px; }
+  .rank .stats { margin-top: 8px; font-size: 0.92rem; opacity: 0.95; }
+  .rank .ppl { display: inline-block; margin-top: 8px; padding: 6px 10px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.35); border-radius: 999px; font-weight: 700; }
+
+  /* ---------- Reveal animation ---------- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s, transform .6s; }
+  .reveal.visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  footer.foot {
+    text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 20px;
+  }
+  footer.foot a { color: var(--accent); text-decoration: none; }
+
+  /* tiny banner */
+  .deal-banner {
+    margin-top: 10px;
+    background: linear-gradient(135deg, rgba(21,128,61,0.15), rgba(74,222,128,0.18));
+    border: 1px solid rgba(21,128,61,0.3);
+    color: var(--good);
+    padding: 8px 12px; border-radius: 10px;
+    font-size: 0.85rem; font-weight: 600;
+  }
+</style>
 </head>
-
 <body>
-  <script>
-    const products = {
-      "7-Eleven": {
-        "Small": {
-          "Price": 1.00,
-          "Volume": 0.35
-        },
-        "Large": {
-          "Price": 1.50,
-          "Volume": 0.65
-        },
-        "Super": {
-          "Price": 2.50,
-          "Volume": 0.83,
-          "AppDeal": {
-            "Price": 2.00,
-            "Until": "2026-05-31",
-            "Note": "7-Eleven app deal"
-          }
-        }
-      },
-      "McDonald's": {
-        "Small": {
-          "Price": 1.00,
-          "MorningPrice": 4.20,
-          "Volume": 0.35
-        },
-        "Medium": {
-          "Price": 1.50,
-          "MorningPrice": 4.70,
-          "Volume": 0.5
-        },
-        "Large": {
-          "Price": 2.00,
-          "MorningPrice": 5.20,
-          "Volume": 0.65
-        }
-      },
-      "Hungry Jack's": {
-        "Small": {
-          "Price": 1.00,
-          "Volume": 0.355
-        },
-        "Medium": {
-          "Price": 1.50,
-          "Volume": 0.473
-        },
-        "Large": {
-          "Price": 2.00,
-          "Volume": 0.591
-        }
-      },
-      "KFC": {
-        "Large": {
-          "Price": 2.00,
-          "Volume": 0.591
-        }
-      }
-    };
-
-    function getPrice(brand, size, priceType) {
-      if (products[brand] && products[brand][size]) {
-        const item = products[brand][size];
-        if (priceType === 'morning') return item.MorningPrice;
-        return item.Price;
-      }
-      return null;
-    }
-
-    function getPricePerLiter(brand, size, priceType) {
-      if (products[brand] && products[brand][size]) {
-        const price = getPrice(brand, size, priceType);
-        return price / products[brand][size].Volume;
-      }
-      return null;
-    }
-
-    function formatSizeAndPriceAndPricePerLiter(brand, size, priceType) {
-      const price = getPrice(brand, size, priceType);
-      const pricePerLiter = getPricePerLiter(brand, size, priceType);
-      if (price && pricePerLiter) {
-        return `${size}: $${price.toFixed(2)} (\$${pricePerLiter.toFixed(2)}/L)`;
-      }
-      return `${size}: Not available`;
-    }
-
-    // function that returns the sizes of an establishment in a string like Small (350ml), Large (650ml), Super (830ml) and Mega (1035ml)
-    function establishmentSizes(brand) {
-      if (products[brand]) {
-        const sizes = Object.keys(products[brand]);
-        if (sizes.length === 1) {
-          return `${sizes[0]} (${products[brand][sizes[0]].Volume * 1000}ml)`;
-        }
-        const formattedSizes = sizes.map(size => `${size} (${products[brand][size].Volume * 1000}ml)`);
-        return formattedSizes.slice(0, -1).join(", ") + " and " + formattedSizes.slice(-1);
-      }
-      return "Not available";
-    }
-  </script>
-  <main>
-    <header>
-      <h1>Frozen Coke Prices</h1>
-    </header>
-    <section>
-      <h2>Price vs Volume</h2>
-      <p>Each point is one purchase option. Lower is cheaper, further right is bigger. Points closer to the bottom-right are better value ($/L).</p>
-      <div id="legend" class="legend"></div>
-      <div class="chart-wrap">
-        <svg id="price-chart" viewBox="0 0 640 380" role="img" aria-label="Price vs volume scatter chart"></svg>
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="brand">
+        <span class="logo">🥤</span>
+        <span>Frozen Coke Index</span>
       </div>
-      <div id="point-info" class="point-info" aria-live="polite">Tap or hover a point for details.</div>
-      <div id="best-worst" class="best-worst"></div>
-    </section>
-    <section>
-      <h2>7-Eleven</h2>
-      <p>7-Eleven offers frozen cokes in three sizes: <script>
-          document.write(establishmentSizes("7-Eleven"));
-      </script>.<br/>
-Unlike other establishments, 7-Eleven allows you to self-serve your frozen coke, so you can actually fill it to the brim if you want to.<br/>
-One worthy exemption to the price structure, is that if you purchase a special-edition reusable cup (normally around ~650ml) you can fill it up for $1.00 indefinitely.
+      <span class="clock" id="clock">—</span>
+    </div>
+  </header>
 
-      </p>
-      <img src="images/slurpee.png" alt="7-Eleven slurpee sizes" class="product-image">
-      <ul>
-        <script>
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("7-Eleven", "Small") + "</li>");
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("7-Eleven", "Large") + "</li>");
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("7-Eleven", "Super") + "</li>");
-        </script>
-      </ul>
-      <script>
-        (function () {
-          const deal = products["7-Eleven"]["Super"] && products["7-Eleven"]["Super"].AppDeal;
-          if (!deal) return;
-          const until = new Date(deal.Until + "T23:59:59");
-          if (until < new Date()) return;
-          const niceDate = until.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-          const ppl = (deal.Price / products["7-Eleven"]["Super"].Volume).toFixed(2);
-          document.write(`<p><strong>🎟️ Limited-time app deal:</strong> Super for $${deal.Price.toFixed(2)} ($${ppl}/L) via the 7-Eleven app — ends ${niceDate}.</p>`);
-        })();
-      </script>
+  <main>
+    <section class="hero">
+      <span class="pill">📍 Australia · live $/L tracker</span>
+      <h1>Brain freeze, but make it value.</h1>
+      <p>Every frozen coke deal across Australia's chain stores, ranked by what actually matters: <strong>price per litre</strong>.</p>
     </section>
-    <section>
-      <h2>McDonald's</h2>
-      <p>McDonald's offers frozen cokes in 3 sizes: <script>
-          document.write(establishmentSizes("McDonald's"));
-      </script></p>
-      <ul>
-        <script>
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Small") + "</li>");
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Medium") + "</li>");
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Large") + "</li>");
-        </script>
-      </ul>
-      <p>
-        Beware: between midnight and 10:30am, McDonald's charges higher "morning" prices for frozen cokes:
-      </p>
-      <ul>
-        <script>
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Small", "morning") + "</li>");
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Medium", "morning") + "</li>");
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("McDonald's", "Large", "morning") + "</li>");
-        </script>
-      </ul>
+
+    <!-- BEST DEAL RIGHT NOW -->
+    <section class="card deal-card reveal" id="deal-card">
+      <div class="label">⚡ Best deal right now</div>
+      <div class="winner" id="deal-name">—</div>
+      <div class="price-row">
+        <div class="price" id="deal-price">—</div>
+        <div class="vol" id="deal-vol"></div>
+      </div>
+      <div class="ppl-badge" id="deal-ppl">—</div>
+      <div class="note" id="deal-note"></div>
+      <div class="warn" id="deal-warn" style="display:none"></div>
     </section>
-    <section>
-      <h2>Hungry Jack's</h2>
-      <p>Hungry Jack's offers frozen cokes in 3 sizes: <script>document.write(establishmentSizes("Hungry Jack's"));</script>.</p>
-      <ul>
-        <script>
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("Hungry Jack's", "Small") + "</li>");
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("Hungry Jack's", "Medium") + "</li>");
-          document.write("<li>" + formatSizeAndPriceAndPricePerLiter("Hungry Jack's", "Large") + "</li>");
-        </script>
-      </ul>
+
+    <!-- RETAILER CARDS -->
+    <section class="reveal">
+      <h2 style="font-family:'Fraunces',serif; margin:8px 4px 10px; font-size:1.4rem;">The contenders</h2>
+      <div class="retailers" id="retailers"></div>
     </section>
-    <section>
-      <h2>KFC</h2>
-      <p>KFC offers frozen cokes in one size only (<script>document.write(establishmentSizes("KFC"));</script>). The price is $2.00.</p>
+
+    <!-- CHART -->
+    <section class="card chart-card reveal">
+      <h2>Price vs Volume</h2>
+      <p class="sub">Every option plotted. Closer to the bottom-right = better value. Tap a point for details.</p>
+      <div id="legend" class="legend"></div>
+      <svg id="chart" viewBox="0 0 640 380" role="img" aria-label="Price vs volume scatter chart"></svg>
+      <div class="info-panel" id="info-panel">Tap a point on the chart for details.</div>
     </section>
+
+    <!-- BEST/WORST -->
+    <section class="reveal">
+      <h2 style="font-family:'Fraunces',serif; margin:8px 4px 10px; font-size:1.4rem;">Hall of fame & shame</h2>
+      <div class="ranking" id="ranking"></div>
+    </section>
+
+    <footer class="foot">
+      Data is community-tracked. Prices in AUD. Last updated <span id="updated"></span>.<br>
+      <a href="https://github.com/benkaiser/slurpees" target="_blank">View on GitHub</a>
+    </footer>
   </main>
-  <script>
-    (function renderChart() {
-      const brandColors = {
-        "7-Eleven": "#1f9d55",
-        "McDonald's": "#e63946",
-        "Hungry Jack's": "#d97706",
-        "KFC": "#b8336a"
-      };
-      // Scenario shapes: circle = standard/only price, triangle = limited-time app deal, square = morning/peak
-      const scenarios = [];
-      const today = new Date();
-      Object.keys(products).forEach(brand => {
-        Object.keys(products[brand]).forEach(size => {
-          const item = products[brand][size];
-          const vol_ml = item.Volume * 1000;
-          if (brand === "McDonald's") {
-            scenarios.push({ brand, size, label: "Standard (10:30am onwards)", price: item.Price, vol_ml, shape: "circle", note: "Counter / app / drive-thru" });
-            scenarios.push({ brand, size, label: "Morning (12am–10:30am)", price: item.MorningPrice, vol_ml, shape: "square", note: "Peak morning pricing" });
-          } else {
-            scenarios.push({ brand, size, label: "Standard", price: item.Price, vol_ml, shape: "circle", note: "" });
-          }
-          // Time-limited app deal — only included while active
-          if (item.AppDeal && new Date(item.AppDeal.Until + "T23:59:59") >= today) {
-            const until = new Date(item.AppDeal.Until + "T23:59:59");
-            const niceDate = until.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-            scenarios.push({
+
+<script>
+  /* ---------- Data ---------- */
+  const products = {
+    "7-Eleven": {
+      "Small":  { Price: 1.00, Volume: 0.35 },
+      "Large":  { Price: 1.50, Volume: 0.65 },
+      "Super":  { Price: 2.50, Volume: 0.83,
+        AppDeal: { Price: 2.00, Until: "2026-05-31", Note: "7-Eleven app deal" } }
+    },
+    "McDonald's": {
+      "Small":  { Price: 1.00, MorningPrice: 4.20, Volume: 0.35 },
+      "Medium": { Price: 1.50, MorningPrice: 4.70, Volume: 0.50 },
+      "Large":  { Price: 2.00, MorningPrice: 5.20, Volume: 0.65 }
+    },
+    "Hungry Jack's": {
+      "Small":  { Price: 1.00, Volume: 0.355 },
+      "Medium": { Price: 1.50, Volume: 0.473 },
+      "Large":  { Price: 2.00, Volume: 0.591 }
+    },
+    "KFC": {
+      "Large":  { Price: 2.00, Volume: 0.591 }
+    }
+  };
+
+  const brandColors = {
+    "7-Eleven": "#008c44",
+    "McDonald's": "#db0007",
+    "Hungry Jack's": "#f59e0b",
+    "KFC": "#b8336a"
+  };
+  const brandClass = {
+    "7-Eleven": "7-eleven",
+    "McDonald's": "maccas",
+    "Hungry Jack's": "hj",
+    "KFC": "kfc"
+  };
+  const brandInitials = {
+    "7-Eleven": "7‑11",
+    "McDonald's": "M",
+    "Hungry Jack's": "HJ",
+    "KFC": "KFC"
+  };
+
+  const now = new Date();
+  const isMaccasMorning = now.getHours() < 10 || (now.getHours() === 10 && now.getMinutes() < 30);
+
+  /* ---------- Build scenarios ---------- */
+  function buildScenarios() {
+    const list = [];
+    Object.keys(products).forEach(brand => {
+      Object.keys(products[brand]).forEach(size => {
+        const item = products[brand][size];
+        const vol_ml = Math.round(item.Volume * 1000);
+        if (brand === "McDonald's") {
+          list.push({ brand, size, label: "Standard (10:30am+)", price: item.Price, vol_ml, shape: "circle", scenario: "standard", note: "Counter / app / drive-thru" });
+          list.push({ brand, size, label: "Morning peak (12am–10:30am)", price: item.MorningPrice, vol_ml, shape: "square", scenario: "peak", note: "Yes, really." });
+        } else {
+          list.push({ brand, size, label: "Standard", price: item.Price, vol_ml, shape: "circle", scenario: "standard", note: "" });
+        }
+        if (item.AppDeal) {
+          const until = new Date(item.AppDeal.Until + "T23:59:59");
+          if (until >= now) {
+            const niceDate = until.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+            list.push({
               brand, size,
               label: `App deal (until ${niceDate})`,
-              price: item.AppDeal.Price,
-              vol_ml,
-              shape: "triangle",
-              note: item.AppDeal.Note || "Limited-time app deal"
+              price: item.AppDeal.Price, vol_ml,
+              shape: "triangle", scenario: "deal",
+              note: item.AppDeal.Note || "Limited-time app deal",
+              expires: until
             });
           }
-        });
-      });
-
-      // Chart geometry
-      const W = 640, H = 380;
-      const M = { top: 20, right: 20, bottom: 50, left: 55 };
-      const innerW = W - M.left - M.right;
-      const innerH = H - M.top - M.bottom;
-
-      const maxVol = Math.max(...scenarios.map(s => s.vol_ml));
-      const maxPrice = Math.max(...scenarios.map(s => s.price));
-      const xMax = Math.ceil(maxVol / 100) * 100;     // round up to nearest 100ml
-      const yMax = Math.ceil(maxPrice * 2) / 2 + 0.5; // round up to nearest 0.5
-
-      const xScale = v => M.left + (v / xMax) * innerW;
-      const yScale = p => M.top + innerH - (p / yMax) * innerH;
-
-      const svg = document.getElementById("price-chart");
-      const NS = "http://www.w3.org/2000/svg";
-      const el = (name, attrs, text) => {
-        const n = document.createElementNS(NS, name);
-        for (const k in attrs) n.setAttribute(k, attrs[k]);
-        if (text != null) n.textContent = text;
-        return n;
-      };
-
-      // Gridlines + axes
-      const gridG = el("g", { class: "grid" });
-      const xTicks = [];
-      for (let v = 0; v <= xMax; v += 200) xTicks.push(v);
-      xTicks.forEach(v => {
-        gridG.appendChild(el("line", { x1: xScale(v), x2: xScale(v), y1: M.top, y2: M.top + innerH }));
-      });
-      const yTickStep = yMax <= 3 ? 0.5 : 1;
-      const yTicks = [];
-      for (let p = 0; p <= yMax + 0.0001; p += yTickStep) yTicks.push(+p.toFixed(2));
-      yTicks.forEach(p => {
-        gridG.appendChild(el("line", { x1: M.left, x2: M.left + innerW, y1: yScale(p), y2: yScale(p) }));
-      });
-      svg.appendChild(gridG);
-
-      // Axes
-      const axisG = el("g", { class: "axis" });
-      axisG.appendChild(el("line", { x1: M.left, y1: M.top + innerH, x2: M.left + innerW, y2: M.top + innerH }));
-      axisG.appendChild(el("line", { x1: M.left, y1: M.top, x2: M.left, y2: M.top + innerH }));
-      xTicks.forEach(v => {
-        axisG.appendChild(el("text", { x: xScale(v), y: M.top + innerH + 16, "text-anchor": "middle" }, v + "ml"));
-      });
-      yTicks.forEach(p => {
-        axisG.appendChild(el("text", { x: M.left - 8, y: yScale(p) + 4, "text-anchor": "end" }, "$" + p.toFixed(2)));
-      });
-      // Axis labels
-      axisG.appendChild(el("text", { x: M.left + innerW / 2, y: H - 10, "text-anchor": "middle", class: "axis-label" }, "Volume (ml)"));
-      const yLabel = el("text", { x: 14, y: M.top + innerH / 2, "text-anchor": "middle", class: "axis-label", transform: `rotate(-90 14 ${M.top + innerH / 2})` }, "Price (AUD)");
-      axisG.appendChild(yLabel);
-      svg.appendChild(axisG);
-
-      // $/L iso-lines (faint diagonals) for context: 2, 4, 8 $/L
-      const isoG = el("g", { class: "grid" });
-      [2, 4, 8].forEach(rate => {
-        // line from (0,0) to (xMax, xMax/1000 * rate)
-        const yAtMax = (xMax / 1000) * rate;
-        if (yAtMax <= yMax) {
-          isoG.appendChild(el("line", {
-            x1: xScale(0), y1: yScale(0),
-            x2: xScale(xMax), y2: yScale(yAtMax),
-            stroke: "#888", "stroke-dasharray": "1 4", opacity: 0.5
-          }));
-          isoG.appendChild(el("text", {
-            x: xScale(xMax) - 4, y: yScale(yAtMax) - 4,
-            "text-anchor": "end", "font-size": 9, fill: "#888"
-          }, "$" + rate + "/L"));
-        } else {
-          // truncate at yMax
-          const xAtYMax = (yMax / rate) * 1000;
-          isoG.appendChild(el("line", {
-            x1: xScale(0), y1: yScale(0),
-            x2: xScale(xAtYMax), y2: yScale(yMax),
-            stroke: "#888", "stroke-dasharray": "1 4", opacity: 0.5
-          }));
-          isoG.appendChild(el("text", {
-            x: xScale(xAtYMax) - 4, y: yScale(yMax) + 12,
-            "text-anchor": "end", "font-size": 9, fill: "#888"
-          }, "$" + rate + "/L"));
         }
       });
-      svg.appendChild(isoG);
+    });
+    list.forEach(s => s.ppl = s.price / (s.vol_ml / 1000));
+    return list;
+  }
+  const scenarios = buildScenarios();
 
-      // Plot points — detect overlapping coords and fan them out so each is hoverable
-      const ptsG = el("g");
-      // group scenarios by their plotted (cx,cy)
-      const groups = new Map();
-      scenarios.forEach(s => {
-        const key = `${Math.round(xScale(s.vol_ml))},${Math.round(yScale(s.price))}`;
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(s);
-      });
-      groups.forEach(group => {
-        const n = group.length;
-        group.forEach((s, i) => {
-          let cx = xScale(s.vol_ml), cy = yScale(s.price);
-          if (n > 1) {
-            // arrange overlapping points in a small ring around the true coord
-            const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
-            const radius = 9;
-            cx += Math.cos(angle) * radius;
-            cy += Math.sin(angle) * radius;
-          }
-          const color = brandColors[s.brand] || "#333";
-          let shape;
-          if (s.shape === "triangle") {
-            const r = 7;
-            shape = el("polygon", {
-              points: `${cx},${cy - r} ${cx - r},${cy + r * 0.8} ${cx + r},${cy + r * 0.8}`,
-              fill: color, stroke: "#fff", "stroke-width": 1.5, class: "point"
-            });
-          } else if (s.shape === "square") {
-            const r = 6;
-            shape = el("rect", {
-              x: cx - r, y: cy - r, width: r * 2, height: r * 2,
-              fill: color, stroke: "#fff", "stroke-width": 1.5, class: "point"
-            });
-          } else {
-            shape = el("circle", {
-              cx, cy, r: 6.5,
-              fill: color, stroke: "#fff", "stroke-width": 1.5, class: "point"
-            });
-          }
-          const ppl = s.price / (s.vol_ml / 1000);
-          const tooltip = `${s.brand} ${s.size} — ${s.label}\n$${s.price.toFixed(2)} for ${s.vol_ml}ml ($${ppl.toFixed(2)}/L)${s.note ? "\n" + s.note : ""}`;
-          shape.appendChild(el("title", {}, tooltip));
-          shape.dataset.brand = s.brand;
-          shape.dataset.size = s.size;
-          shape.dataset.label = s.label;
-          shape.dataset.price = s.price;
-          shape.dataset.vol = s.vol_ml;
-          shape.dataset.ppl = ppl.toFixed(2);
-          shape.dataset.note = s.note || "";
-          shape.dataset.color = color;
-          shape.addEventListener("click", onPointSelect);
-          shape.addEventListener("touchstart", onPointSelect, { passive: true });
-          ptsG.appendChild(shape);
-        });
-      });
-      svg.appendChild(ptsG);
+  /* ---------- Hero deal: best available right now ---------- */
+  function pickBestNow() {
+    // Right now means: include morning peak only if it's morning, etc. But really you'd never
+    // pick the morning peak — it's always more expensive. So "best right now" = lowest $/L
+    // among scenarios that are actually available at this moment. App deals always available
+    // until expiry, standard always available, peak only available during morning.
+    const available = scenarios.filter(s => {
+      if (s.scenario === "peak") return false; // never a "deal"
+      return true;
+    });
+    available.sort((a, b) => a.ppl - b.ppl);
+    return available[0];
+  }
+  const best = pickBestNow();
+  document.getElementById("deal-name").textContent = `${best.brand} ${best.size}`;
+  document.getElementById("deal-price").textContent = "$" + best.price.toFixed(2);
+  document.getElementById("deal-vol").textContent = `for ${best.vol_ml}ml`;
+  document.getElementById("deal-ppl").innerHTML = `🧊 <span>$${best.ppl.toFixed(2)} / litre</span>`;
+  let noteText = best.label;
+  if (best.note) noteText += ` · ${best.note}`;
+  document.getElementById("deal-note").textContent = noteText;
 
-      // Click/tap handler — populate the info panel
-      const infoEl = document.getElementById("point-info");
-      function onPointSelect(ev) {
-        ev.preventDefault();
-        const t = ev.currentTarget;
-        document.querySelectorAll("#price-chart .point.selected").forEach(n => n.classList.remove("selected"));
-        t.classList.add("selected");
-        const d = t.dataset;
-        infoEl.innerHTML =
-          `<strong><span class="swatch" style="background:${d.color}"></span>${d.brand} — ${d.size}</strong><br>` +
-          `${d.label} · $${(+d.price).toFixed(2)} for ${d.vol}ml · <strong>$${d.ppl}/L</strong>` +
-          (d.note ? `<br><small>${d.note}</small>` : "");
+  if (isMaccasMorning) {
+    const warn = document.getElementById("deal-warn");
+    warn.style.display = "block";
+    warn.innerHTML = `⏰ Heads up: it's currently morning peak at McDonald's. Their prices won't drop to standard until 10:30am — frozen cokes there are <strong>$4.20–$5.20</strong> right now.`;
+  }
+
+  /* ---------- Retailer cards ---------- */
+  const maxPpl = Math.max(...scenarios.map(s => s.ppl));
+  const retailerEl = document.getElementById("retailers");
+  Object.keys(products).forEach(brand => {
+    const card = document.createElement("article");
+    card.className = `card retailer ${brandClass[brand]}`;
+    card.style.setProperty("--r", brandColors[brand]);
+    let html = `
+      <div class="retailer-head">
+        <div class="retailer-badge">${brandInitials[brand]}</div>
+        <div class="retailer-name">${brand}</div>
+      </div>
+      <ul class="size-list">`;
+    Object.keys(products[brand]).forEach(size => {
+      const item = products[brand][size];
+      const vol_ml = Math.round(item.Volume * 1000);
+      // Pick a "headline" price for each size: cheapest currently-available scenario for that size
+      const cands = scenarios.filter(s => s.brand === brand && s.size === size && s.scenario !== "peak");
+      cands.sort((a,b) => a.ppl - b.ppl);
+      const head = cands[0];
+      const pct = Math.min(100, (head.ppl / maxPpl) * 100);
+      let tag = "";
+      if (head.scenario === "deal") tag = `<span class="scenario-tag deal">deal</span>`;
+      html += `
+        <li class="size-row">
+          <div class="size-name">${size} <small>${vol_ml}ml</small>${tag}</div>
+          <div class="size-price">$${head.price.toFixed(2)}</div>
+          <div class="ppl-bar"><span style="width:${pct}%"></span></div>
+          <div class="ppl-text" style="grid-column: 1 / -1;">$${head.ppl.toFixed(2)}/L${head.scenario === "deal" ? ` · ${head.label}` : ""}</div>
+        </li>`;
+      // Add peak row for McDonald's
+      if (brand === "McDonald's") {
+        const peak = scenarios.find(s => s.brand === brand && s.size === size && s.scenario === "peak");
+        if (peak) {
+          const pPct = Math.min(100, (peak.ppl / maxPpl) * 100);
+          html += `
+            <li class="size-row" style="opacity:.7">
+              <div class="size-name" style="font-weight:500"><small>↳ morning peak</small> <span class="scenario-tag peak">12am–10:30am</span></div>
+              <div class="size-price" style="color:var(--bad)">$${peak.price.toFixed(2)}</div>
+              <div class="ppl-bar"><span style="width:${pPct}%; background:linear-gradient(90deg,#c0392b,#ff6b5e)"></span></div>
+              <div class="ppl-text" style="grid-column: 1 / -1;">$${peak.ppl.toFixed(2)}/L</div>
+            </li>`;
+        }
       }
-      // Click outside points clears selection
-      document.getElementById("price-chart").addEventListener("click", (e) => {
-        if (!e.target.closest(".point")) {
-          document.querySelectorAll("#price-chart .point.selected").forEach(n => n.classList.remove("selected"));
-          infoEl.textContent = "Tap or hover a point for details.";
+    });
+    html += `</ul>`;
+    // Notes
+    if (brand === "7-Eleven") {
+      html += `<div class="retailer-note">🥤 Self-serve — fill it to the brim. Reusable cup → $1 refills indefinitely.</div>`;
+      const dealItem = products["7-Eleven"]["Super"].AppDeal;
+      if (dealItem && new Date(dealItem.Until + "T23:59:59") >= now) {
+        const niceDate = new Date(dealItem.Until + "T23:59:59").toLocaleDateString(undefined, { day:"numeric", month:"short", year:"numeric" });
+        html += `<div class="deal-banner">🎟️ Super for $${dealItem.Price.toFixed(2)} via the 7-Eleven app · ends ${niceDate}</div>`;
+      }
+    }
+    if (brand === "McDonald's") {
+      html += `<div class="retailer-note">⏰ Morning peak (12am–10:30am) is genuinely punishing. Wait if you can.</div>`;
+    }
+    if (brand === "KFC") {
+      html += `<div class="retailer-note">🪣 Same cup as Hungry Jack's, double the price.</div>`;
+    }
+    card.innerHTML = html;
+    retailerEl.appendChild(card);
+  });
+
+  /* ---------- Chart ---------- */
+  (function renderChart(){
+    const W = 640, H = 380, M = { top: 20, right: 20, bottom: 50, left: 55 };
+    const innerW = W - M.left - M.right, innerH = H - M.top - M.bottom;
+    const xMax = Math.ceil(Math.max(...scenarios.map(s => s.vol_ml)) / 100) * 100;
+    const yMax = Math.ceil(Math.max(...scenarios.map(s => s.price)) * 2) / 2 + 0.5;
+    const xScale = v => M.left + (v / xMax) * innerW;
+    const yScale = p => M.top + innerH - (p / yMax) * innerH;
+    const NS = "http://www.w3.org/2000/svg";
+    const svg = document.getElementById("chart");
+    const el = (n,a,t) => { const e = document.createElementNS(NS,n); for (const k in a) e.setAttribute(k,a[k]); if (t!=null) e.textContent=t; return e; };
+
+    // grid
+    const grid = el("g",{class:"grid"});
+    for (let v=0; v<=xMax; v+=200) grid.appendChild(el("line",{x1:xScale(v),x2:xScale(v),y1:M.top,y2:M.top+innerH}));
+    const yStep = yMax<=3 ? 0.5 : 1;
+    for (let p=0; p<=yMax+0.001; p+=yStep) grid.appendChild(el("line",{x1:M.left,x2:M.left+innerW,y1:yScale(p),y2:yScale(p)}));
+    svg.appendChild(grid);
+
+    // iso lines
+    const iso = el("g",{});
+    [2,4,8].forEach(rate => {
+      const yAtMax = (xMax/1000)*rate;
+      let x2,y2;
+      if (yAtMax<=yMax){ x2=xScale(xMax); y2=yScale(yAtMax); }
+      else { x2=xScale((yMax/rate)*1000); y2=yScale(yMax); }
+      iso.appendChild(el("line",{x1:xScale(0),y1:yScale(0),x2,y2,class:"iso"}));
+      iso.appendChild(el("text",{x:x2-4,y:y2-4,"text-anchor":"end",class:"iso-text"},`$${rate}/L`));
+    });
+    svg.appendChild(iso);
+
+    // axes
+    const ax = el("g",{class:"axis"});
+    ax.appendChild(el("line",{x1:M.left,y1:M.top+innerH,x2:M.left+innerW,y2:M.top+innerH}));
+    ax.appendChild(el("line",{x1:M.left,y1:M.top,x2:M.left,y2:M.top+innerH}));
+    for (let v=0; v<=xMax; v+=200) ax.appendChild(el("text",{x:xScale(v),y:M.top+innerH+16,"text-anchor":"middle"}, v+"ml"));
+    for (let p=0; p<=yMax+0.001; p+=yStep) ax.appendChild(el("text",{x:M.left-8,y:yScale(p)+4,"text-anchor":"end"}, "$"+p.toFixed(2)));
+    ax.appendChild(el("text",{x:M.left+innerW/2,y:H-10,"text-anchor":"middle","font-weight":"600"},"Volume (ml)"));
+    ax.appendChild(el("text",{x:14,y:M.top+innerH/2,"text-anchor":"middle","font-weight":"600", transform:`rotate(-90 14 ${M.top+innerH/2})`},"Price (AUD)"));
+    svg.appendChild(ax);
+
+    // points (with overlap fan-out)
+    const groups = new Map();
+    scenarios.forEach(s => {
+      const key = `${Math.round(xScale(s.vol_ml))},${Math.round(yScale(s.price))}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(s);
+    });
+    const ptsG = el("g",{});
+    groups.forEach(group => {
+      const n = group.length;
+      group.forEach((s, i) => {
+        let cx = xScale(s.vol_ml), cy = yScale(s.price);
+        if (n > 1){
+          const angle = (i/n)*Math.PI*2 - Math.PI/2;
+          cx += Math.cos(angle)*9; cy += Math.sin(angle)*9;
         }
+        const color = brandColors[s.brand];
+        let shape;
+        if (s.shape === "triangle"){
+          const r=7;
+          shape = el("polygon",{points:`${cx},${cy-r} ${cx-r},${cy+r*0.8} ${cx+r},${cy+r*0.8}`,fill:color,stroke:"#fff","stroke-width":1.5,class:"point"});
+        } else if (s.shape === "square"){
+          const r=6;
+          shape = el("rect",{x:cx-r,y:cy-r,width:r*2,height:r*2,fill:color,stroke:"#fff","stroke-width":1.5,class:"point"});
+        } else {
+          shape = el("circle",{cx,cy,r:6.5,fill:color,stroke:"#fff","stroke-width":1.5,class:"point"});
+        }
+        const tip = `${s.brand} ${s.size} — ${s.label}\n$${s.price.toFixed(2)} for ${s.vol_ml}ml ($${s.ppl.toFixed(2)}/L)${s.note?"\n"+s.note:""}`;
+        shape.appendChild(el("title",{},tip));
+        Object.assign(shape.dataset, {brand:s.brand,size:s.size,label:s.label,price:s.price,vol:s.vol_ml,ppl:s.ppl.toFixed(2),note:s.note||"",color});
+        shape.addEventListener("click", onSelect);
+        shape.addEventListener("touchstart", onSelect, { passive: true });
+        ptsG.appendChild(shape);
       });
+    });
+    svg.appendChild(ptsG);
 
-      // Legend
-      const legendEl = document.getElementById("legend");
-      Object.keys(brandColors).forEach(b => {
-        const item = document.createElement("span");
-        item.className = "item";
-        item.innerHTML = `<span class="swatch" style="background:${brandColors[b]}"></span>${b}`;
-        legendEl.appendChild(item);
-      });
-      const sep = document.createElement("span");
-      sep.style.opacity = ".6";
-      sep.textContent = "•";
-      legendEl.appendChild(sep);
-      const shapeKeys = [
-        { svg: '<svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#666"/></svg>', text: "Standard" },
-        { svg: '<svg width="14" height="14"><polygon points="7,1 1,12 13,12" fill="#666"/></svg>', text: "Limited app deal" },
-        { svg: '<svg width="14" height="14"><rect x="2" y="2" width="10" height="10" fill="#666"/></svg>', text: "Morning peak" }
-      ];
-      // Hide shape keys not currently in use
-      const usedShapes = new Set(scenarios.map(s => s.shape));
-      const shapeNameByKey = { circle: "Standard", triangle: "Limited app deal", square: "Morning peak" };
-      shapeKeys.forEach(k => {
-        const usedNames = new Set([...usedShapes].map(sh => shapeNameByKey[sh]));
-        if (!usedNames.has(k.text)) return;
-        const item = document.createElement("span");
-        item.className = "shape-key";
-        item.innerHTML = `${k.svg}${k.text}`;
-        legendEl.appendChild(item);
-      });
+    const info = document.getElementById("info-panel");
+    function onSelect(ev){
+      ev.preventDefault();
+      const t = ev.currentTarget;
+      svg.querySelectorAll(".point.selected").forEach(n => n.classList.remove("selected"));
+      t.classList.add("selected");
+      const d = t.dataset;
+      info.innerHTML =
+        `<strong><span class="swatch" style="background:${d.color}"></span>${d.brand} — ${d.size}</strong><br>` +
+        `${d.label} · $${(+d.price).toFixed(2)} for ${d.vol}ml · <strong>$${d.ppl}/L</strong>` +
+        (d.note ? `<br><small style="color:var(--muted)">${d.note}</small>` : "");
+    }
+    svg.addEventListener("click", e => {
+      if (!e.target.closest(".point")){
+        svg.querySelectorAll(".point.selected").forEach(n => n.classList.remove("selected"));
+        info.textContent = "Tap a point on the chart for details.";
+      }
+    });
 
-      // Best & worst by $/L
-      const ranked = scenarios
-        .map(s => ({ ...s, ppl: s.price / (s.vol_ml / 1000) }))
-        .sort((a, b) => a.ppl - b.ppl);
-      const best = ranked[0];
-      const worst = ranked[ranked.length - 1];
-      const bw = document.getElementById("best-worst");
-      bw.innerHTML = `
-        <div class="best">
-          <h4>🏆 Best value</h4>
-          <p><strong>${best.brand} ${best.size}</strong> — ${best.label}<br>
-          $${best.price.toFixed(2)} for ${best.vol_ml}ml<br>
-          <strong>$${best.ppl.toFixed(2)}/L</strong>${best.note ? " · " + best.note : ""}</p>
-        </div>
-        <div class="worst">
-          <h4>💸 Worst value</h4>
-          <p><strong>${worst.brand} ${worst.size}</strong> — ${worst.label}<br>
-          $${worst.price.toFixed(2)} for ${worst.vol_ml}ml<br>
-          <strong>$${worst.ppl.toFixed(2)}/L</strong>${worst.note ? " · " + worst.note : ""}</p>
-        </div>
-      `;
-    })();
-  </script>
+    // Legend
+    const legendEl = document.getElementById("legend");
+    Object.keys(brandColors).forEach(b => {
+      const i = document.createElement("span");
+      i.className = "item";
+      i.innerHTML = `<span class="swatch" style="background:${brandColors[b]}"></span>${b}`;
+      legendEl.appendChild(i);
+    });
+    legendEl.appendChild(Object.assign(document.createElement("span"), { textContent:"·", style:"opacity:.5" }));
+    const used = new Set(scenarios.map(s=>s.shape));
+    const shapeKeys = [
+      { key:"circle",   svg:'<svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#666"/></svg>',                text:"Standard" },
+      { key:"triangle", svg:'<svg width="12" height="12"><polygon points="6,1 1,11 11,11" fill="#666"/></svg>',           text:"Limited deal" },
+      { key:"square",   svg:'<svg width="12" height="12"><rect x="1" y="1" width="10" height="10" fill="#666"/></svg>',   text:"Morning peak" }
+    ];
+    shapeKeys.filter(k => used.has(k.key)).forEach(k => {
+      const i = document.createElement("span");
+      i.className = "item";
+      i.innerHTML = `${k.svg}${k.text}`;
+      legendEl.appendChild(i);
+    });
+  })();
+
+  /* ---------- Best & worst ---------- */
+  (function renderRanking(){
+    const ranked = [...scenarios].sort((a,b) => a.ppl - b.ppl);
+    const best = ranked[0], worst = ranked[ranked.length-1];
+    document.getElementById("ranking").innerHTML = `
+      <div class="rank best">
+        <div class="label">🏆 Best value (per litre)</div>
+        <div class="who">${best.brand} ${best.size}</div>
+        <div class="stats">$${best.price.toFixed(2)} for ${best.vol_ml}ml · ${best.label}</div>
+        <div class="ppl">$${best.ppl.toFixed(2)}/L</div>
+      </div>
+      <div class="rank worst">
+        <div class="label">💸 Worst value (per litre)</div>
+        <div class="who">${worst.brand} ${worst.size}</div>
+        <div class="stats">$${worst.price.toFixed(2)} for ${worst.vol_ml}ml · ${worst.label}</div>
+        <div class="ppl">$${worst.ppl.toFixed(2)}/L</div>
+      </div>
+    `;
+  })();
+
+  /* ---------- Clock + footer ---------- */
+  (function tickClock(){
+    const fmt = new Intl.DateTimeFormat(undefined, { hour:"numeric", minute:"2-digit" });
+    const set = () => document.getElementById("clock").textContent = "🕒 " + fmt.format(new Date());
+    set(); setInterval(set, 30000);
+    document.getElementById("updated").textContent = new Date().toLocaleDateString(undefined, { day:"numeric", month:"short", year:"numeric" });
+  })();
+
+  /* ---------- Reveal on scroll ---------- */
+  if ("IntersectionObserver" in window) {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); }});
+    }, { threshold: 0.08 });
+    document.querySelectorAll(".reveal").forEach(n => obs.observe(n));
+  } else {
+    document.querySelectorAll(".reveal").forEach(n => n.classList.add("visible"));
+  }
+</script>
 </body>
-
 </html>
